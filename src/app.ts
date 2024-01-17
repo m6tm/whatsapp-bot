@@ -1,7 +1,9 @@
 import path from 'path';
 import app from '../app';
-import debug from "debug";
-import http from "http";
+import { getEnv } from './utils/appSettings';
+import { APP_ENV } from './enums/appSettings';
+
+require('dotenv').config()
 
 let package_json = require(path.join(process.cwd(), "package.json"));
 
@@ -9,7 +11,7 @@ let package_json = require(path.join(process.cwd(), "package.json"));
  * Get port from environment and store in Express.
  */
 
-const local_hosts = package_json.app_env != 'local'? [] : [
+const local_hosts = getEnv().APP_ENV != APP_ENV.local ? [] : [
   "http://localhost:3000",
   "http://localhost:8000",
 ]

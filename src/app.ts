@@ -1,56 +1,39 @@
-import path from 'path';
-import app from '../app';
-import { getEnv } from './utils/appSettings';
-import { APP_ENV } from './enums/appSettings';
+import app from './routes/api';
+import express from "express";
+import cookieParser from "cookie-parser";
+import bodyParser from 'body-parser';
+import logger from "morgan";
+import { useExpressServer } from 'routing-controllers';
+import UserController from './Http/Controller/UserController';
 
 require('dotenv').config()
 
-let package_json = require(path.join(process.cwd(), "package.json"));
+var port = process.env.PORT || '3500'
+const serve = express();
 
-/**
- * Get port from environment and store in Express.
- */
+useExpressServer(serve, {
+  controllers: [
+    UserController
+  ]
+})
 
-const local_hosts = getEnv().APP_ENV != APP_ENV.local ? [] : [
-  "http://localhost:3000",
-  "http://localhost:8000",
-]
-
-var port = normalizePort(process.env.PORT || 3500) as number,
-  origins = [
-    ...local_hosts,
-  ];
-app
-        .set('port', port)
-        .listen(port, () => {
-                console.log(
-                    '%s App is running at http://localhost:%d in %s mode',
-                    '>>>',
-                    port,
-                    app.get('env')
-                );
-            })
-
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val: any) {
-  var port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
+serve
+  .use(logger('dev'))
+  // .use(bodyParser.urlencoded({ extended: false }))
+  .use(bodyParser.json())
+  .use(bodyParser.urlencoded({ extended: true }))
+  .use(cookieParser())
+  .use(function(req, res,) {
+    // res.status(404);
+    res.json({
+      status: 404,
+      message: 'Not Found',
+    });
+  })
+  .set('port', port)
+  .listen(port, () => {
+    console.log('%s App is running at http://localhost:%d in %s mode', '>>>', port, app.get('env'));
+  })
 
 /**
  * Event listener for HTTP server "error" event.

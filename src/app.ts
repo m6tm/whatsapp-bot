@@ -15,7 +15,7 @@ const serve = express();
 serve
   .use(logger('dev'))
   .use(express.json())
-  .use(express.urlencoded({ extended: true }))
+  .use(express.urlencoded({ extended: false, type: 'multipart/form-data' }))
   .use(cookieParser())
   .use(AuthMiddleware)
   .use(cors({

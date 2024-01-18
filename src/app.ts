@@ -1,28 +1,27 @@
-import app from './routes/api';
+import AppRouter from './routes/api';
 import express from "express";
 import cookieParser from "cookie-parser";
-import bodyParser from 'body-parser';
 import logger from "morgan";
-import { useExpressServer } from 'routing-controllers';
-import UserController from './Http/Controller/UserController';
+import cors from "cors";
+import { AuthMiddleware } from './Http/middlewares/AuthMiddleware';
+import AUTHORIZED_URLS from './utils/cors';
+import { getEnv } from './utils/appSettings';
 
 require('dotenv').config()
 
 var port = process.env.PORT || '3500'
 const serve = express();
 
-useExpressServer(serve, {
-  controllers: [
-    UserController
-  ]
-})
-
 serve
   .use(logger('dev'))
-  // .use(bodyParser.urlencoded({ extended: false }))
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
+  .use(express.json())
+  .use(express.urlencoded({ extended: true }))
   .use(cookieParser())
+  .use(AuthMiddleware)
+  .use(cors({
+    origin: AUTHORIZED_URLS,
+  }))
+  .use('/api', AppRouter)
   .use(function(req, res,) {
     // res.status(404);
     res.json({
@@ -32,7 +31,7 @@ serve
   })
   .set('port', port)
   .listen(port, () => {
-    console.log('%s App is running at http://localhost:%d in %s mode', '>>>', port, app.get('env'));
+    console.log('%s App is running at http://localhost:%s in %s mode', '>>>', port, getEnv().APP_ENV);
   })
 
 /**

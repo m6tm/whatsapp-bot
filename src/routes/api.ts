@@ -1,17 +1,10 @@
-import 'reflect-metadata'
-import { createExpressServer } from 'routing-controllers'
-import UserController from '../Http/Controller/UserController'
-import type { Express } from 'express'
-import AUTHORIZED_URLS from '../utils/cors'
+import express from "express";
+import userRouter from "../Http/Controller/UserController";
 
 
-const app: Express = createExpressServer({
-        controllers: [
-                UserController
-        ],
-        cors: {
-                origin: AUTHORIZED_URLS
-        }
-})
+const AppRouter = express.Router()
 
-export default app
+AppRouter
+        .use('/user', userRouter)
+
+export default AppRouter

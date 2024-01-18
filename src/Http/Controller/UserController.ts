@@ -1,19 +1,13 @@
-import 'reflect-metadata'
-import { Body, Controller, Get, JsonController, Param, Post, QueryParams, Req, Res, UseBefore } from 'routing-controllers'
-import { type Request, type Response } from 'express'
-import CreateUserRequest from '../Request/CreateUserRequest'
-import { validationResult } from 'express-validator'
+import express from "express";
+import CreateUserRequest from "../Request/CreateUserRequest";
 
+const userRouter = express.Router();
 
-@Controller()
-export default class UserController {
-        @Post('/add')
-        store(@Body() body: any, @Req() request: Request, @Res() response: Response) {
-                return response.json({
-                        status: 200,
-                        message: 'OK',
-                        data: body,
-                        datas: request.body,
-                })
-        }
-}
+userRouter.post("/", ...CreateUserRequest, (req, res) => {
+	res.json({
+		status: 200,
+		message: "User added successfully",
+	});
+});
+
+export default userRouter;

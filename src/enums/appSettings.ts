@@ -1,6 +1,5 @@
 export enum APP_ENV {
-	local = "local",
-	dev = "dev",
+	dev = "development",
 	test = "test",
 	prod = "prod",
 }
